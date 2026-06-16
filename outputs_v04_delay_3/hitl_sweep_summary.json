@@ -1,0 +1,13 @@
+[
+  {
+    "scenario": "bottleneck",
+    "mode": "adaptive_hitl",
+    "episodes": 50,
+    "noise_std": 0.1,
+    "risk_threshold": 0.3,
+    "risk_threshold_low": 0.15,
+    "cooldown_steps": 5,
+    "reliability": 0.95,
+    "delay_steps": 3
+  }
+]

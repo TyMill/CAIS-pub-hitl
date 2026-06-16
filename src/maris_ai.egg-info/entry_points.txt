@@ -1,0 +1,7 @@
+[console_scripts]
+maris-cais-federated = maris_ai.experiments.cli:main_federated
+maris-cais-hitl = maris_ai.experiments.cli:main_hitl
+maris-cais-plots = maris_ai.experiments.cli:main_plots
+maris-cais-replay = maris_ai.experiments.cli:main_replay
+maris-cais-report = maris_ai.experiments.cli:main_report
+maris-cais-sweep = maris_ai.experiments.cli:main_sweep

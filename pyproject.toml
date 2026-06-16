@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "maris-ai"
+version = "0.4.0"
+description = "MARIS-AI: CAIS experimental stack with human-in-the-loop governance, audit, replay, FL, statistics & reports"
+authors = [{name = "Tymoteusz Miller"}]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "pandas>=2.0",
+  "matplotlib>=3.7"
+]
+
+[project.scripts]
+maris-cais-sweep = "maris_ai.experiments.cli:main_sweep"
+maris-cais-replay = "maris_ai.experiments.cli:main_replay"
+maris-cais-federated = "maris_ai.experiments.cli:main_federated"
+maris-cais-plots = "maris_ai.experiments.cli:main_plots"
+maris-cais-report = "maris_ai.experiments.cli:main_report"
+maris-cais-hitl = "maris_ai.experiments.cli:main_hitl"
+
+[tool.setuptools.packages.find]
+where = ["src"]

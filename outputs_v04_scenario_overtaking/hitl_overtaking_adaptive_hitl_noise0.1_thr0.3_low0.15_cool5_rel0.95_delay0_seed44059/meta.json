@@ -1,0 +1,29 @@
+{
+  "seed": 44059,
+  "scenario": "overtaking",
+  "mode": "adaptive_hitl",
+  "centralized": true,
+  "projection": "heuristic",
+  "steps": 150,
+  "n_agents": 5,
+  "noise_std": 0.1,
+  "risk_threshold": 0.3,
+  "risk_threshold_low": 0.15,
+  "cooldown_steps": 5,
+  "reliability": 0.95,
+  "delay_steps": 0,
+  "C": {
+    "v_max": 2.0,
+    "sep_min": 1.0,
+    "arena_radius": 20.0,
+    "step_dt": 0.2,
+    "margin": 0.0
+  },
+  "policy_ids": [
+    "aed0f4f4b7530cfe0ba86e5595d4c2ed989e3856ff4b7bbb898e1987cd67de00",
+    "58a698adfa179aa204f0f4bca73fa0e2b387a83c6701a9f760a2a674c6212303",
+    "9fce08bd81eac1f143fe8272a1625b4134ab8c3b738e180cd111ffab44235984",
+    "71d89e4d9a6563fd5b044a7c7fc150b0afb764e90fd22649a5364c23aa912155",
+    "739c7ed733cbd5698d9066917f22d5fcef4e3b6f95d4955b28d6e5e158a29ebb"
+  ]
+}

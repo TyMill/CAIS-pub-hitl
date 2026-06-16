@@ -1,0 +1,23 @@
+{
+  "violation_rate": 0.0,
+  "collision_rate": 0.0,
+  "near_miss_rate": 0.0,
+  "intervention_rate": 0.0,
+  "override_success_rate": 0.0,
+  "mean_intervention_delay": 0.0,
+  "operator_workload": 0.0,
+  "mean_drift": 8.509060930458775,
+  "p95_drift": 26.965782330321147,
+  "mean_latency_ms": 0.3150161206334208,
+  "risk_mean": 0.2411440897675408,
+  "risk_p95": 0.24599999999995895,
+  "separation_risk_mean": 0.0,
+  "congestion_risk_mean": 0.0,
+  "speed_risk_mean": 0.9676272651169389,
+  "uncertainty_risk_mean": 0.64,
+  "human_activation_count": 0,
+  "cooldown_skips": 0,
+  "trigger_active_rate": 0.0,
+  "confidence_mean": 0.9500000000000002,
+  "false_intervention_rate": 0.0
+}
