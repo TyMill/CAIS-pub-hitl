@@ -19,6 +19,7 @@ from maris_ai.governance.base import GovernanceConfig
 from maris_ai.governance.operator import DefaultGovernance
 from maris_ai.human.metrics import HITLMetrics
 from maris_ai.human.operator import HumanGovernanceOperator, HumanOversightConfig
+from maris_ai.human.risk import RiskWeights
 
 
 def _json_default(obj: Any):
@@ -71,6 +72,11 @@ def _apply_mode(
     risk_threshold_low: float | None = None,
     cooldown_steps: int = 5,
     noise_std: float = 0.0,
+    risk_weights: RiskWeights | None = None,
+    risk_lookahead_steps: int = 5,
+    safe_speed_ratio: float = 0.80,
+    critical_sep_factor: float = 1.0,
+    trend_release_delta: float = 0.15,
 ):
     if mode in {"none", "gate_fallback", "project"}:
         G = DefaultGovernance()
@@ -89,6 +95,7 @@ def _apply_mode(
                 "cooldown_skip": False,
                 "trigger": {"active": False, "reason": "non_hitl_mode"},
                 "latency_ms": float((time.perf_counter() - start) * 1000.0),
+                "risk_weights": {},
             }
         )
         return actions, meta
@@ -105,6 +112,11 @@ def _apply_mode(
         reliability=reliability,
         delay_steps=delay_steps,
         noise_std=noise_std,
+        risk_weights=risk_weights or RiskWeights(),
+        risk_lookahead_steps=risk_lookahead_steps,
+        safe_speed_ratio=safe_speed_ratio,
+        critical_sep_factor=critical_sep_factor,
+        trend_release_delta=trend_release_delta,
     )
     actions, meta = H.apply(positions, proposals, C=C, cfg=cfg, rng=rng)
     meta["hitl_mode"] = mode
@@ -130,6 +142,11 @@ def run_hitl_episode(
     delay_steps: int = 0,
     risk_threshold_low: float | None = None,
     cooldown_steps: int = 5,
+    risk_weights: RiskWeights | None = None,
+    risk_lookahead_steps: int = 5,
+    safe_speed_ratio: float = 0.80,
+    critical_sep_factor: float = 1.0,
+    trend_release_delta: float = 0.15,
 ) -> HITLMetrics:
     rng = np.random.default_rng(seed)
     init = SCENARIOS[scenario](seed, ScenarioParams(n_agents=n_agents, arena_radius=C.arena_radius))
@@ -159,6 +176,17 @@ def run_hitl_episode(
     cooldown_skips = 0
     trigger_active_steps = 0
     false_interventions = 0
+    suppressed_critical_count = 0
+    cooldown_release_count = 0
+    critical_override_count = 0
+    critical_steps = 0
+    repeated_interventions = 0
+    previous_intervention_step: int | None = None
+    last_intervention_step: int | None = None
+    post_intervention_window_steps = 0
+    post_intervention_violations = 0
+    drift_after_intervention: list[float] = []
+    min_predicted_distances: list[float] = []
 
     for t in range(steps):
         positions = [ag.pos for ag in s.agents]
@@ -182,6 +210,11 @@ def run_hitl_episode(
             risk_threshold_low=risk_threshold_low,
             cooldown_steps=cooldown_steps,
             noise_std=noise_std,
+            risk_weights=risk_weights,
+            risk_lookahead_steps=risk_lookahead_steps,
+            safe_speed_ratio=safe_speed_ratio,
+            critical_sep_factor=critical_sep_factor,
+            trend_release_delta=trend_release_delta,
         )
         latencies.append(float(meta.get("latency_ms", 0.0)))
         risk_payload = meta.get("risk", {}) if isinstance(meta.get("risk", {}), dict) else {}
@@ -190,27 +223,47 @@ def run_hitl_episode(
         congestion_risks.append(float(risk_payload.get("congestion", 0.0)))
         speed_risks.append(float(risk_payload.get("speed", 0.0)))
         uncertainty_risks.append(float(risk_payload.get("uncertainty", 0.0)))
+        min_predicted_distances.append(float(risk_payload.get("min_predicted_distance", float("nan"))))
+        is_critical = bool(risk_payload.get("critical", False))
+        if is_critical:
+            critical_steps += 1
         confidence_values.append(float(meta.get("effective_reliability", reliability)))
         if bool(meta.get("cooldown_skip", False)):
             cooldown_skips += 1
+            if is_critical:
+                suppressed_critical_count += 1
         trigger_meta = meta.get("trigger", {}) if isinstance(meta.get("trigger", {}), dict) else {}
+        if bool(trigger_meta.get("cooldown_released", False)):
+            cooldown_release_count += 1
+        if trigger_meta.get("reason") == "critical_override":
+            critical_override_count += 1
         if bool(trigger_meta.get("active", False)):
             trigger_active_steps += 1
 
         ok, res = admissible_joint(positions, actions, C)
         if not ok:
             violations += 1
+        if last_intervention_step is not None and 1 <= (t - last_intervention_step) <= 3:
+            post_intervention_window_steps += 1
+            if not ok:
+                post_intervention_violations += 1
         collisions += _collision_count(positions, C.sep_min)
         near_misses += _near_miss_count(positions, C.sep_min)
 
+        step_drifts = _drifts(actions, proposals).tolist()
         if bool(meta.get("human_intervened", False)):
             interventions += 1
+            if previous_intervention_step is not None and t - previous_intervention_step == 1:
+                repeated_interventions += 1
+            previous_intervention_step = t
+            last_intervention_step = t
+            drift_after_intervention.extend(step_drifts)
             if bool(meta.get("human_success", False)) and ok:
                 successful_overrides += 1
             if bool(meta.get("proposal_ok", False)) and bool(meta.get("final_ok", False)):
                 false_interventions += 1
 
-        drifts.extend(_drifts(actions, proposals).tolist())
+        drifts.extend(step_drifts)
 
         rec = make_trace_record(
             t=t,
@@ -249,6 +302,11 @@ def run_hitl_episode(
         "cooldown_steps": cooldown_steps,
         "reliability": reliability,
         "delay_steps": delay_steps,
+        "risk_weights": asdict(risk_weights or RiskWeights()),
+        "risk_lookahead_steps": risk_lookahead_steps,
+        "safe_speed_ratio": safe_speed_ratio,
+        "critical_sep_factor": critical_sep_factor,
+        "trend_release_delta": trend_release_delta,
         "C": asdict(C),
         "policy_ids": policy_ids,
     }
@@ -256,6 +314,9 @@ def run_hitl_episode(
     (out_dir / "trace_ok.json").write_text(json.dumps({"hash_chain_ok": verify_hash_chain(records)}, indent=2), encoding="utf-8")
 
     drifts_np = np.array(drifts, dtype=float)
+    risks_np = np.array(risks, dtype=float)
+    finite_min_dist = np.array([x for x in min_predicted_distances if np.isfinite(x)], dtype=float)
+    drift_after_np = np.array(drift_after_intervention, dtype=float)
     em = HITLMetrics(
         violation_rate=float(violations / max(1, steps)),
         collision_rate=float(collisions / max(1, steps)),
@@ -267,17 +328,30 @@ def run_hitl_episode(
         mean_drift=float(drifts_np.mean() if drifts_np.size else 0.0),
         p95_drift=float(np.quantile(drifts_np, 0.95) if drifts_np.size else 0.0),
         mean_latency_ms=float(np.mean(latencies) if latencies else 0.0),
-        risk_mean=float(np.mean(risks) if risks else 0.0),
-        risk_p95=float(np.quantile(np.array(risks, dtype=float), 0.95) if risks else 0.0),
+        risk_mean=float(np.mean(risks_np) if risks_np.size else 0.0),
+        risk_p05=float(np.quantile(risks_np, 0.05) if risks_np.size else 0.0),
+        risk_p25=float(np.quantile(risks_np, 0.25) if risks_np.size else 0.0),
+        risk_p50=float(np.quantile(risks_np, 0.50) if risks_np.size else 0.0),
+        risk_p75=float(np.quantile(risks_np, 0.75) if risks_np.size else 0.0),
+        risk_p95=float(np.quantile(risks_np, 0.95) if risks_np.size else 0.0),
         separation_risk_mean=float(np.mean(separation_risks) if separation_risks else 0.0),
         congestion_risk_mean=float(np.mean(congestion_risks) if congestion_risks else 0.0),
         speed_risk_mean=float(np.mean(speed_risks) if speed_risks else 0.0),
         uncertainty_risk_mean=float(np.mean(uncertainty_risks) if uncertainty_risks else 0.0),
         human_activation_count=int(interventions),
         cooldown_skips=int(cooldown_skips),
+        suppressed_request_count=int(cooldown_skips),
+        suppressed_critical_count=int(suppressed_critical_count),
+        cooldown_release_count=int(cooldown_release_count),
+        critical_override_count=int(critical_override_count),
+        critical_trigger_rate=float(critical_steps / max(1, steps)),
         trigger_active_rate=float(trigger_active_steps / max(1, steps)),
         confidence_mean=float(np.mean(confidence_values) if confidence_values else 0.0),
         false_intervention_rate=float(false_interventions / max(1, interventions)),
+        repeated_intervention_rate=float(repeated_interventions / max(1, interventions)),
+        post_intervention_violation_rate=float(post_intervention_violations / max(1, post_intervention_window_steps)),
+        mean_drift_after_intervention=float(np.mean(drift_after_np) if drift_after_np.size else 0.0),
+        min_predicted_distance_mean=float(np.mean(finite_min_dist) if finite_min_dist.size else 0.0),
     )
     (out_dir / "metrics.json").write_text(json.dumps(em.__dict__, indent=2), encoding="utf-8")
     return em
@@ -300,6 +374,11 @@ def sweep_hitl(
     delay_steps: int = 0,
     risk_threshold_low: float | None = None,
     cooldown_steps: int = 5,
+    risk_weights: RiskWeights | None = None,
+    risk_lookahead_steps: int = 5,
+    safe_speed_ratio: float = 0.80,
+    critical_sep_factor: float = 1.0,
+    trend_release_delta: float = 0.15,
 ) -> list[dict[str, Any]]:
     summaries: list[dict[str, Any]] = []
     rows: list[dict[str, Any]] = []
@@ -328,6 +407,11 @@ def sweep_hitl(
                     delay_steps=delay_steps,
                     risk_threshold_low=risk_threshold_low,
                     cooldown_steps=cooldown_steps,
+                    risk_weights=risk_weights,
+                    risk_lookahead_steps=risk_lookahead_steps,
+                    safe_speed_ratio=safe_speed_ratio,
+                    critical_sep_factor=critical_sep_factor,
+                    trend_release_delta=trend_release_delta,
                 )
                 row = {
                     "run_id": run_id,
@@ -340,6 +424,11 @@ def sweep_hitl(
                     "cooldown_steps": cooldown_steps,
                     "reliability": reliability,
                     "delay_steps": delay_steps,
+                    "risk_weights": json.dumps(asdict(risk_weights or RiskWeights())),
+                    "risk_lookahead_steps": risk_lookahead_steps,
+                    "safe_speed_ratio": safe_speed_ratio,
+                    "critical_sep_factor": critical_sep_factor,
+                    "trend_release_delta": trend_release_delta,
                     **metrics.__dict__,
                 }
                 rows.append(row)
@@ -354,6 +443,11 @@ def sweep_hitl(
                     "cooldown_steps": int(cooldown_steps),
                     "reliability": float(reliability),
                     "delay_steps": int(delay_steps),
+                    "risk_weights": asdict(risk_weights or RiskWeights()),
+                    "risk_lookahead_steps": int(risk_lookahead_steps),
+                    "safe_speed_ratio": float(safe_speed_ratio),
+                    "critical_sep_factor": float(critical_sep_factor),
+                    "trend_release_delta": float(trend_release_delta),
                 }
             )
 

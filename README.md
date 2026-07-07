@@ -1,34 +1,96 @@
 [![DOI](https://zenodo.org/badge/1186199729.svg)](https://doi.org/10.5281/zenodo.19110440)
 
-# MARIS-AI (v0.4.0) — CAIS + Risk-Aware Human-in-the-Loop Governance
+# MARIS-AI (v0.5.0) — CAIS + Adaptive Human Oversight Revision Pack
 
 End-to-end, self-contained experimental stack for:
-- multi-agent maritime-inspired encounters (2D),
+
+- multi-agent maritime-inspired encounters in a reproducible 2D simulator,
 - governance-constrained decision execution (**G**),
-- risk-aware human-in-the-loop governance (**HITL-G**),
+- risk-aware human-in-the-loop governance (**AHO / HITL-G**),
+- non-compensatory hard-safety override before composite risk aggregation,
+- corrected excessive-speed risk instead of naive `V / Vmax`,
+- finite-horizon separation prediction,
+- trend-aware cooldown release,
+- trace-level cooldown diagnostics,
+- stress-test scenarios,
 - audit trace semantics (**Φ**) with hash chaining,
 - replayability verification (**Ψ**),
-- federated learning (FedAvg),
 - results-ready CSV/JSON exports.
 
 ## Install
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 pip install -e .
 ```
 
-## Standard CAIS sweep
+On Windows PowerShell:
 
-```bash
-maris-cais-sweep --episodes 30 --steps 200 --agents 5 --seed 42 --scenario crossing --centralized --projection slsqp
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e .
 ```
 
-## Risk-aware HITL sweep
+## Reviewer-response changes in v0.5.0
+
+This revision directly addresses the review concerns raised for the AHO manuscript:
+
+1. **Hard safety override** — critical separation, boundary, or speed violations are evaluated as non-compensatory conditions. They force risk to `1.0` and bypass cooldown.
+2. **Corrected speed risk** — speed risk is now zero below `safe_speed_ratio * Vmax` and increases only in the excessive-speed margin.
+3. **Finite-horizon separation risk** — predicted minimum distance is evaluated over configurable look-ahead decision cycles.
+4. **Trend-aware cooldown** — cooldown suppresses redundant requests, but it is released if risk rises sharply or a critical condition appears.
+5. **Additional diagnostics** — outputs now include risk percentiles, critical override counts, suppressed request counts, suppressed-critical counts, repeated intervention rate, post-intervention violation rate, and drift after intervention.
+6. **Stress tests** — added `high_density`, `sudden_emergency`, and `boundary_stress` scenarios.
+7. **CRAM sensitivity** — supports explicit risk-weight configurations for reviewer-facing sensitivity analysis.
+
+## Quick smoke test
+
+```bash
+python scripts/run_revision_pack.py --quick --outputs outputs_v05_smoke
+python scripts/analyze_revision_outputs.py outputs_v05_smoke
+```
+
+## Full reviewer-response experiment pack
+
+This reproduces the main revision flow: corrected CRAM baseline, threshold sweep, cooldown diagnostics, weight sensitivity, stress tests, delay sweep, and reliability sweep.
+
+```bash
+python scripts/run_revision_pack.py \
+  --episodes 50 \
+  --steps 150 \
+  --agents 5 \
+  --seed 42 \
+  --scenario bottleneck \
+  --noise-std 0.10 \
+  --risk-threshold 0.40 \
+  --risk-threshold-low 0.20 \
+  --cooldown-steps 5 \
+  --reliability 0.95 \
+  --delay-steps 0 \
+  --outputs outputs_v05_revision_pack
+
+python scripts/analyze_revision_outputs.py outputs_v05_revision_pack
+```
+
+Key files after analysis:
+
+- `outputs_v05_revision_pack/revision_pack_manifest.json`
+- `outputs_v05_revision_pack/analysis/revision_all_episode_results.csv`
+- `outputs_v05_revision_pack/analysis/revision_group_summary_mean.csv`
+- `outputs_v05_revision_pack/analysis/revision_compact_rebuttal_table.csv`
+- `outputs_v05_revision_pack/analysis/revision_risk_distribution_percentiles.csv`
+- `outputs_v05_revision_pack/analysis/threshold_response_curve.csv`
+- `outputs_v05_revision_pack/analysis/cooldown_diagnostics.csv`
+- `outputs_v05_revision_pack/analysis/threshold_response_curve.png`
+- `outputs_v05_revision_pack/analysis/cooldown_intervention_rate.png`
+
+## Single AHO run
 
 ```bash
 maris-cais-hitl \
-  --scenario bottleneck \
+  --scenarios bottleneck \
   --episodes 20 \
   --steps 100 \
   --agents 5 \
@@ -40,39 +102,68 @@ maris-cais-hitl \
   --cooldown-steps 5 \
   --reliability 0.95 \
   --delay-steps 0 \
-  --outputs outputs_hitl_v04_test
+  --risk-lookahead-steps 5 \
+  --safe-speed-ratio 0.80 \
+  --critical-sep-factor 1.0 \
+  --trend-release-delta 0.15 \
+  --outputs outputs_hitl_v05_test
 ```
 
-## Paper-ready threshold sweep
+## CRAM weight sensitivity
+
+Weights can be passed either positionally:
 
 ```bash
-for TH in 0.10 0.20 0.30 0.40 0.50 0.60; do
-  maris-cais-hitl \
-    --scenario bottleneck \
-    --episodes 50 \
-    --steps 150 \
-    --agents 5 \
-    --seed 42 \
-    --modes adaptive_hitl \
-    --noise-std 0.10 \
-    --risk-threshold $TH \
-    --risk-threshold-low $(python - <<PY
-print(float("$TH")/2)
+maris-cais-hitl --modes adaptive_hitl --scenarios bottleneck --risk-weights 0.60,0.15,0.15,0.10 --outputs outputs_weights_sep_heavy
+```
+
+or by name:
+
+```bash
+maris-cais-hitl --modes adaptive_hitl --scenarios bottleneck --risk-weights sep=0.60,cong=0.15,speed=0.15,unc=0.10 --outputs outputs_weights_sep_heavy
+```
+
+The order is always:
+
+```text
+separation, congestion, speed, uncertainty
+```
+
+## Stress-test scenarios
+
+```bash
+maris-cais-hitl --modes adaptive_hitl --scenarios high_density --agents 12 --episodes 50 --steps 150 --noise-std 0.10 --outputs outputs_stress_high_density
+maris-cais-hitl --modes adaptive_hitl --scenarios sudden_emergency --episodes 50 --steps 150 --noise-std 0.10 --outputs outputs_stress_sudden_emergency
+maris-cais-hitl --modes adaptive_hitl --scenarios boundary_stress --episodes 50 --steps 150 --noise-std 0.10 --outputs outputs_stress_boundary
+maris-cais-hitl --modes adaptive_hitl --scenarios bottleneck --episodes 50 --steps 150 --noise-std 0.30 --outputs outputs_stress_noise_spike
+```
+
+## Paper-ready sweeps
+
+### Threshold / risk-distribution sweep
+
+```bash
+for TH in 0.05 0.10 0.20 0.30 0.40 0.50 0.70; do
+  python - <<PY
+from pathlib import Path
+from maris_ai.experiments.hitl_runner import sweep_hitl
+from maris_ai.governance.constraints import ConstraintSpec
+C = ConstraintSpec(v_max=2.0, sep_min=1.0, arena_radius=20.0, step_dt=0.2)
+sweep_hitl(seed=42, episodes=50, steps=150, n_agents=5, noise_std=0.10,
+           scenarios=["bottleneck"], modes=["adaptive_hitl"], centralized=True,
+           projection="heuristic", C=C, outputs_dir=Path(f"outputs_v05_threshold_${TH}"),
+           risk_threshold=float("${TH}"), risk_threshold_low=float("${TH}")/2,
+           cooldown_steps=5, reliability=0.95, delay_steps=0)
 PY
-) \
-    --cooldown-steps 5 \
-    --reliability 0.95 \
-    --delay-steps 0 \
-    --outputs outputs_hitl_threshold_$TH
 done
 ```
 
-## Operator delay sweep
+### Cooldown diagnostic sweep
 
 ```bash
-for DELAY in 0 1 3 5 10; do
+for COOL in 0 2 5 10 20; do
   maris-cais-hitl \
-    --scenario bottleneck \
+    --scenarios bottleneck \
     --episodes 50 \
     --steps 150 \
     --agents 5 \
@@ -81,53 +172,36 @@ for DELAY in 0 1 3 5 10; do
     --noise-std 0.10 \
     --risk-threshold 0.40 \
     --risk-threshold-low 0.20 \
-    --cooldown-steps 5 \
+    --cooldown-steps $COOL \
     --reliability 0.95 \
-    --delay-steps $DELAY \
-    --outputs outputs_hitl_delay_$DELAY
-done
-```
-
-## Operator reliability sweep
-
-```bash
-for REL in 1.00 0.95 0.90 0.75 0.50; do
-  maris-cais-hitl \
-    --scenario bottleneck \
-    --episodes 50 \
-    --steps 150 \
-    --agents 5 \
-    --seed 42 \
-    --modes adaptive_hitl \
-    --noise-std 0.10 \
-    --risk-threshold 0.40 \
-    --risk-threshold-low 0.20 \
-    --cooldown-steps 5 \
-    --reliability $REL \
     --delay-steps 0 \
-    --outputs outputs_hitl_reliability_$REL
+    --outputs outputs_v05_cooldown_$COOL
 done
 ```
 
-## Integrity replay (Ψ)
+## Output metrics added in v0.5.0
+
+Each episode-level `metrics.json` and sweep-level `hitl_results.csv` now include:
+
+- `risk_p05`, `risk_p25`, `risk_p50`, `risk_p75`, `risk_p95`,
+- `critical_trigger_rate`,
+- `critical_override_count`,
+- `suppressed_request_count`,
+- `suppressed_critical_count`,
+- `cooldown_release_count`,
+- `repeated_intervention_rate`,
+- `post_intervention_violation_rate`,
+- `mean_drift_after_intervention`,
+- `min_predicted_distance_mean`.
+
+These are intended to support rebuttal claims such as: cooldown suppresses redundant intervention requests while critical events are not suppressed.
+
+## Integrity replay
 
 ```bash
-maris-cais-replay outputs/<run_id>/
+maris-cais-replay outputs_v05_revision_pack/baseline_corrected_cram/<run_id>/
 ```
 
-## Main HITL modes
+## Important interpretation note
 
-- `cais_only` — CAIS action without human intervention.
-- `human_approval` — human confirms or misses CAIS action at every step.
-- `human_override` — human may override unsafe behaviour.
-- `adaptive_hitl` — risk-aware activation with composite risk, hysteresis and cooldown.
-
-## New in v0.4.0
-
-The previous HITL version used a raw max-residual trigger, which behaved almost binarily. v0.4.0 adds:
-
-- `human/risk.py` — composite risk score: separation, congestion, speed and uncertainty.
-- `human/trigger.py` — stateful hysteresis and cooldown trigger.
-- extended HITL metrics: `risk_mean`, `risk_p95`, component risks, `cooldown_skips`, `trigger_active_rate`, `false_intervention_rate`.
-
-Each run exports `metrics.json`, `trace.jsonl`, `trace_ok.json`, and a sweep-level `hitl_results.csv`.
+One simulation step represents one full agent-governance-oversight decision cycle. It is not a universal real-time unit. For deployment-oriented discussion, it may be mapped to a selected operational decision cycle, for example 5 seconds, but that mapping is scenario- and system-dependent.

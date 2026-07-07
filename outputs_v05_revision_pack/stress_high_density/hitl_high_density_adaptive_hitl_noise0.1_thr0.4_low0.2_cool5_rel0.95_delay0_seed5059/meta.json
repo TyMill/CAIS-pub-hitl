@@ -1,0 +1,46 @@
+{
+  "seed": 5059,
+  "scenario": "high_density",
+  "mode": "adaptive_hitl",
+  "centralized": true,
+  "projection": "heuristic",
+  "steps": 150,
+  "n_agents": 12,
+  "noise_std": 0.1,
+  "risk_threshold": 0.4,
+  "risk_threshold_low": 0.2,
+  "cooldown_steps": 5,
+  "reliability": 0.95,
+  "delay_steps": 0,
+  "risk_weights": {
+    "separation": 0.45,
+    "congestion": 0.25,
+    "speed": 0.15,
+    "uncertainty": 0.15
+  },
+  "risk_lookahead_steps": 5,
+  "safe_speed_ratio": 0.8,
+  "critical_sep_factor": 1.0,
+  "trend_release_delta": 0.15,
+  "C": {
+    "v_max": 2.0,
+    "sep_min": 1.0,
+    "arena_radius": 20.0,
+    "step_dt": 0.2,
+    "margin": 0.0
+  },
+  "policy_ids": [
+    "027d37ab5f522b81a597cbac969432add19742ae2e8bfbaa23e7bc801fe43673",
+    "8ef8467d6c8be7398e1dbfee314d2065e92eff2fd00eea6597f3e3c1b294a4b1",
+    "cbfcd7baa435a4aa47dcc207b5c3e4c2792d637a5587b4a438345885c3e101b1",
+    "5e7bd1d7f6eb2b085180b6281bd2540d8deebcba9f4c9404232c1840aa9359e3",
+    "71c3906dc0de692c5f1e574b8ffbd17ad8d7b8ae63e3d061fd0e08691d2ea106",
+    "67608692bc7c15cbddbe355526d7ddc3fb93b2cce0e3a45c06a325c0f055b2b5",
+    "8f910f60e8e48c62e08375262d1efad08c7973a1eec8c77c2972f5a6ebc172b2",
+    "cdcc4d4d7a1f680aa0a64d41817d51adf1f7d578087ecac1d6d9e5f4fc19fd2d",
+    "021a008f2b361faa73fb134e632feb0870a962c6ebe9bdabfd25ddcbe8989a54",
+    "9fa54615bf8d61c974fbd592c5f0ab9cefb7f42c7530d3327f5b9db9eba883c1",
+    "48edf0a592f34bed884f2cc6f257d4b50f1bf416ad8818e1f1ff10c185ebb982",
+    "42181e521df2456dd03812ef0bf9111c3ef53bc7a46245a50a1d4e8b2ab0be3f"
+  ]
+}

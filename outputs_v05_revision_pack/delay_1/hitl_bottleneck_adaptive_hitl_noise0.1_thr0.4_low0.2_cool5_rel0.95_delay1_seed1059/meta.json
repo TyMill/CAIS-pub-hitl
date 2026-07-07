@@ -1,0 +1,39 @@
+{
+  "seed": 1059,
+  "scenario": "bottleneck",
+  "mode": "adaptive_hitl",
+  "centralized": true,
+  "projection": "heuristic",
+  "steps": 150,
+  "n_agents": 5,
+  "noise_std": 0.1,
+  "risk_threshold": 0.4,
+  "risk_threshold_low": 0.2,
+  "cooldown_steps": 5,
+  "reliability": 0.95,
+  "delay_steps": 1,
+  "risk_weights": {
+    "separation": 0.45,
+    "congestion": 0.25,
+    "speed": 0.15,
+    "uncertainty": 0.15
+  },
+  "risk_lookahead_steps": 5,
+  "safe_speed_ratio": 0.8,
+  "critical_sep_factor": 1.0,
+  "trend_release_delta": 0.15,
+  "C": {
+    "v_max": 2.0,
+    "sep_min": 1.0,
+    "arena_radius": 20.0,
+    "step_dt": 0.2,
+    "margin": 0.0
+  },
+  "policy_ids": [
+    "ee809243f79d521319fd182ee8d24579df2776466a96c358295f3b73cfac235d",
+    "8478fa007a636aee84f04ef9abd821b4fe3c54b0b32ce37014015e95bdad4864",
+    "f6e3b91dcaa4f7b8f356a02d9c83f5f2269eb15de0aac406fed64a4469e7ce78",
+    "27b5a517722d353fd5f14df95568fa6edfb63da7baf7d04c9062a32e77e4d049",
+    "81ee24dfc14a221eb477e2d02ba005c222a7fd2625b4ee976b65c7eef5caa285"
+  ]
+}

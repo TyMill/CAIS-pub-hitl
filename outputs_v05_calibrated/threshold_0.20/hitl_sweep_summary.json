@@ -1,0 +1,23 @@
+[
+  {
+    "scenario": "bottleneck",
+    "mode": "adaptive_hitl",
+    "episodes": 50,
+    "noise_std": 0.1,
+    "risk_threshold": 0.2,
+    "risk_threshold_low": 0.1,
+    "cooldown_steps": 5,
+    "reliability": 0.95,
+    "delay_steps": 0,
+    "risk_weights": {
+      "separation": 0.45,
+      "congestion": 0.25,
+      "speed": 0.15,
+      "uncertainty": 0.15
+    },
+    "risk_lookahead_steps": 3,
+    "safe_speed_ratio": 0.8,
+    "critical_sep_factor": 0.5,
+    "trend_release_delta": 0.2
+  }
+]

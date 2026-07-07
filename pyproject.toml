@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "maris-ai"
-version = "0.4.0"
-description = "MARIS-AI: CAIS experimental stack with human-in-the-loop governance, audit, replay, FL, statistics & reports"
+version = "0.5.0"
+description = "MARIS-AI: CAIS experimental stack with v0.5 risk-aware human-in-the-loop governance revision experiments"
 authors = [{name = "Tymoteusz Miller"}]
 readme = "README.md"
 requires-python = ">=3.10"

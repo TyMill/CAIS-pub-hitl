@@ -30,6 +30,10 @@ class HumanOversightConfig:
     adaptive_only_on_risk: bool = True
     noise_std: float = 0.0
     risk_weights: RiskWeights = RiskWeights()
+    risk_lookahead_steps: int = 5
+    safe_speed_ratio: float = 0.80
+    critical_sep_factor: float = 1.0
+    trend_release_delta: float = 0.15
 
     @property
     def threshold_high(self) -> float:
@@ -54,15 +58,17 @@ class HumanGovernanceOperator:
     def __init__(self) -> None:
         self._G = DefaultGovernance()
         self._trigger: AdaptiveTrigger | None = None
-        self._trigger_signature: tuple[float, float, int] | None = None
+        self._trigger_signature: tuple[float, float, int, float] | None = None
+        self._last_risk: float | None = None
 
     def _get_trigger(self, cfg: HumanOversightConfig) -> AdaptiveTrigger:
-        signature = (cfg.threshold_high, cfg.threshold_low, int(cfg.cooldown_steps))
+        signature = (cfg.threshold_high, cfg.threshold_low, int(cfg.cooldown_steps), float(cfg.trend_release_delta))
         if self._trigger is None or self._trigger_signature != signature:
             self._trigger = AdaptiveTrigger(
                 threshold_high=cfg.threshold_high,
                 threshold_low=cfg.threshold_low,
                 cooldown_steps=int(max(0, cfg.cooldown_steps)),
+                trend_release_delta=float(cfg.trend_release_delta),
             )
             self._trigger_signature = signature
         return self._trigger
@@ -92,8 +98,12 @@ class HumanGovernanceOperator:
             C=C,
             noise_std=cfg.noise_std,
             weights=cfg.risk_weights,
+            lookahead_steps=cfg.risk_lookahead_steps,
+            safe_speed_ratio=cfg.safe_speed_ratio,
+            critical_sep_factor=cfg.critical_sep_factor,
         )
         proposal_risk = float(risk.total)
+        risk_delta = 0.0 if self._last_risk is None else proposal_risk - float(self._last_risk)
 
         trigger_meta: dict[str, Any] = {
             "intervene": False,
@@ -106,7 +116,7 @@ class HumanGovernanceOperator:
         if cfg.mode == "adaptive_hitl":
             if cfg.adaptive_only_on_risk:
                 trigger = self._get_trigger(cfg)
-                decision = trigger.evaluate(proposal_risk)
+                decision = trigger.evaluate(proposal_risk, critical=bool(risk.critical), risk_delta=risk_delta)
                 trigger_meta = decision.to_dict()
                 should_intervene = bool(decision.intervene)
             else:
@@ -149,6 +159,11 @@ class HumanGovernanceOperator:
                 "risk_threshold_high": float(cfg.threshold_high),
                 "risk_threshold_low": float(cfg.threshold_low),
                 "cooldown_steps": int(cfg.cooldown_steps),
+                "risk_delta": float(risk_delta),
+                "risk_lookahead_steps": int(cfg.risk_lookahead_steps),
+                "safe_speed_ratio": float(cfg.safe_speed_ratio),
+                "critical_sep_factor": float(cfg.critical_sep_factor),
+                "trend_release_delta": float(cfg.trend_release_delta),
                 "trigger": trigger_meta,
                 "cooldown_skip": bool(trigger_meta.get("reason") == "cooldown" and not should_intervene),
                 "proposal_ok": bool(ok_prop),
@@ -159,4 +174,5 @@ class HumanGovernanceOperator:
                 "latency_ms": float((time.perf_counter() - start) * 1000.0),
             }
         )
+        self._last_risk = proposal_risk
         return actions, human_meta

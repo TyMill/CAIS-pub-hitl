@@ -1,0 +1,927 @@
+{
+  "config": {
+    "seed": 42,
+    "episodes": 50,
+    "steps": 150,
+    "agents": 5,
+    "scenario": "bottleneck",
+    "noise_std": 0.1,
+    "projection": "heuristic",
+    "outputs": "outputs_v05_revision_pack",
+    "risk_threshold": 0.4,
+    "risk_threshold_low": 0.2,
+    "cooldown_steps": 5,
+    "reliability": 0.95,
+    "delay_steps": 0,
+    "risk_weights": null,
+    "risk_lookahead_steps": 5,
+    "safe_speed_ratio": 0.8,
+    "critical_sep_factor": 1.0,
+    "trend_release_delta": 0.15,
+    "v_max": 2.0,
+    "sep_min": 1.0,
+    "arena_radius": 20.0,
+    "dt": 0.2,
+    "margin": 0.0,
+    "quick": false
+  },
+  "effective_risk_weights": {
+    "separation": 0.45,
+    "congestion": 0.25,
+    "speed": 0.15,
+    "uncertainty": 0.15
+  },
+  "groups": [
+    {
+      "group": "baseline_corrected_cram",
+      "outputs": "outputs_v05_revision_pack/baseline_corrected_cram",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "threshold_0.05",
+      "outputs": "outputs_v05_revision_pack/threshold_0.05",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.05,
+          "risk_threshold_low": 0.025,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "threshold_0.10",
+      "outputs": "outputs_v05_revision_pack/threshold_0.10",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.1,
+          "risk_threshold_low": 0.05,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "threshold_0.20",
+      "outputs": "outputs_v05_revision_pack/threshold_0.20",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.2,
+          "risk_threshold_low": 0.1,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "threshold_0.30",
+      "outputs": "outputs_v05_revision_pack/threshold_0.30",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.3,
+          "risk_threshold_low": 0.15,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "threshold_0.40",
+      "outputs": "outputs_v05_revision_pack/threshold_0.40",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "threshold_0.50",
+      "outputs": "outputs_v05_revision_pack/threshold_0.50",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.5,
+          "risk_threshold_low": 0.25,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "threshold_0.70",
+      "outputs": "outputs_v05_revision_pack/threshold_0.70",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.7,
+          "risk_threshold_low": 0.35,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "cooldown_0",
+      "outputs": "outputs_v05_revision_pack/cooldown_0",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 0,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "cooldown_2",
+      "outputs": "outputs_v05_revision_pack/cooldown_2",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 2,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "cooldown_5",
+      "outputs": "outputs_v05_revision_pack/cooldown_5",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "cooldown_10",
+      "outputs": "outputs_v05_revision_pack/cooldown_10",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 10,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "cooldown_20",
+      "outputs": "outputs_v05_revision_pack/cooldown_20",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 20,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "weights_uniform",
+      "outputs": "outputs_v05_revision_pack/weights_uniform",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.25,
+            "congestion": 0.25,
+            "speed": 0.25,
+            "uncertainty": 0.25
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "weights_separation_heavy",
+      "outputs": "outputs_v05_revision_pack/weights_separation_heavy",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.6,
+            "congestion": 0.15,
+            "speed": 0.15,
+            "uncertainty": 0.1
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "weights_congestion_heavy",
+      "outputs": "outputs_v05_revision_pack/weights_congestion_heavy",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.3,
+            "congestion": 0.4,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "weights_speed_heavy",
+      "outputs": "outputs_v05_revision_pack/weights_speed_heavy",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.3,
+            "congestion": 0.2,
+            "speed": 0.35,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "weights_uncertainty_heavy",
+      "outputs": "outputs_v05_revision_pack/weights_uncertainty_heavy",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.3,
+            "congestion": 0.2,
+            "speed": 0.15,
+            "uncertainty": 0.35
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "weights_baseline",
+      "outputs": "outputs_v05_revision_pack/weights_baseline",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "stress_high_density",
+      "outputs": "outputs_v05_revision_pack/stress_high_density",
+      "summaries": [
+        {
+          "scenario": "high_density",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "stress_sudden_emergency",
+      "outputs": "outputs_v05_revision_pack/stress_sudden_emergency",
+      "summaries": [
+        {
+          "scenario": "sudden_emergency",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "stress_boundary",
+      "outputs": "outputs_v05_revision_pack/stress_boundary",
+      "summaries": [
+        {
+          "scenario": "boundary_stress",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "stress_noise_spike",
+      "outputs": "outputs_v05_revision_pack/stress_noise_spike",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.3,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "delay_0",
+      "outputs": "outputs_v05_revision_pack/delay_0",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "delay_1",
+      "outputs": "outputs_v05_revision_pack/delay_1",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 1,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "delay_3",
+      "outputs": "outputs_v05_revision_pack/delay_3",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 3,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "delay_5",
+      "outputs": "outputs_v05_revision_pack/delay_5",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 5,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "delay_10",
+      "outputs": "outputs_v05_revision_pack/delay_10",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 10,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "reliability_1.00",
+      "outputs": "outputs_v05_revision_pack/reliability_1.00",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 1.0,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "reliability_0.95",
+      "outputs": "outputs_v05_revision_pack/reliability_0.95",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.95,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "reliability_0.90",
+      "outputs": "outputs_v05_revision_pack/reliability_0.90",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.9,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "reliability_0.75",
+      "outputs": "outputs_v05_revision_pack/reliability_0.75",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.75,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    },
+    {
+      "group": "reliability_0.50",
+      "outputs": "outputs_v05_revision_pack/reliability_0.50",
+      "summaries": [
+        {
+          "scenario": "bottleneck",
+          "mode": "adaptive_hitl",
+          "episodes": 50,
+          "noise_std": 0.1,
+          "risk_threshold": 0.4,
+          "risk_threshold_low": 0.2,
+          "cooldown_steps": 5,
+          "reliability": 0.5,
+          "delay_steps": 0,
+          "risk_weights": {
+            "separation": 0.45,
+            "congestion": 0.25,
+            "speed": 0.15,
+            "uncertainty": 0.15
+          },
+          "risk_lookahead_steps": 5,
+          "safe_speed_ratio": 0.8,
+          "critical_sep_factor": 1.0,
+          "trend_release_delta": 0.15
+        }
+      ]
+    }
+  ]
+}

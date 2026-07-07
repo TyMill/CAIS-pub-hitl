@@ -24,7 +24,7 @@ def main_sweep():
     p.add_argument("--agents", type=int, default=5)
     p.add_argument("--noise-std", type=float, default=0.05)
     p.add_argument("--scenario", type=str, default="crossing",
-                   choices=["head_on","crossing","overtaking","bottleneck","restricted_zone"])
+                   choices=["head_on","crossing","overtaking","bottleneck","restricted_zone","high_density","sudden_emergency","boundary_stress"])
     p.add_argument("--centralized", action="store_true")
     p.add_argument("--projection", type=str, default="heuristic", choices=["heuristic","slsqp"])
     p.add_argument("--outputs", type=str, default="outputs")
@@ -136,6 +136,7 @@ def main_federated():
 
 def main_hitl():
     from maris_ai.experiments.hitl_runner import sweep_hitl
+    from maris_ai.human.risk import RiskWeights
 
     p = argparse.ArgumentParser()
     p.add_argument("--seed", type=int, default=42)
@@ -153,6 +154,11 @@ def main_hitl():
     p.add_argument("--cooldown-steps", type=int, default=5)
     p.add_argument("--reliability", type=float, default=0.95)
     p.add_argument("--delay-steps", type=int, default=0)
+    p.add_argument("--risk-weights", type=str, default=None, help="CRAM weights: sep,cong,speed,unc or sep=...,cong=...,speed=...,unc=...")
+    p.add_argument("--risk-lookahead-steps", type=int, default=5)
+    p.add_argument("--safe-speed-ratio", type=float, default=0.80)
+    p.add_argument("--critical-sep-factor", type=float, default=1.0)
+    p.add_argument("--trend-release-delta", type=float, default=0.15)
     p.add_argument("--v-max", type=float, default=2.0)
     p.add_argument("--sep-min", type=float, default=1.0)
     p.add_argument("--arena-radius", type=float, default=20.0)
@@ -169,6 +175,7 @@ def main_hitl():
     )
     scenarios = [x.strip() for x in args.scenarios.split(",") if x.strip()]
     modes = [x.strip() for x in args.modes.split(",") if x.strip()]
+    risk_weights = RiskWeights.from_string(args.risk_weights)
     summaries = sweep_hitl(
         seed=args.seed,
         episodes=args.episodes,
@@ -186,6 +193,11 @@ def main_hitl():
         cooldown_steps=args.cooldown_steps,
         reliability=args.reliability,
         delay_steps=args.delay_steps,
+        risk_weights=risk_weights,
+        risk_lookahead_steps=args.risk_lookahead_steps,
+        safe_speed_ratio=args.safe_speed_ratio,
+        critical_sep_factor=args.critical_sep_factor,
+        trend_release_delta=args.trend_release_delta,
     )
     print(json.dumps(summaries, indent=2))
 
